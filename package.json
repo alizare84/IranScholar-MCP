@@ -1,0 +1,31 @@
+{
+  "name": "iranscholar-mcp",
+  "version": "0.1.0",
+  "description": "IranScholar MCP — search Persian academic sources (Irandoc, Noormags, Civilica, SID, NLAI) for thesis writing",
+  "type": "module",
+  "bin": {
+    "iranscholar-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "smoke": "node --import tsx scripts/smoke.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["mcp", "persian", "academic", "iranscholar", "thesis"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "cheerio": "^1.0.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
