@@ -8,16 +8,18 @@ stdio MCP server for Persian academic discovery — search articles and theses a
 
 | Source | Status | Notes |
 |--------|--------|-------|
-| **Noormags** (نورمگز) | **live** | HTML search + citation meta on article pages |
-| **Civilica** (سیویلیکا) | **live** | SSR search `/search/paper/…` + `/doc/{id}/` meta |
-| **Irandoc / Ganj** (ایرانداک) | **live** | via `search.irandoc.ac.ir` Ganj API (network can be flaky) |
+| **Noormags** (نورمگز) | **live** | HTML search + Highwire citation meta on article pages |
+| **Civilica** (سیویلیکا) | **live** | Prefer SSR `/search/paper/…` + `/doc/{id}/`; falls back to Irandoc Civilica proxy when direct SSR fails |
+| **Irandoc / Ganj** (ایرانداک) | **live** | `search.irandoc.ac.ir` Ganj API (direct `ganj.irandoc.ac.ir` often times out). `get_record` uses in-process cache from a recent `search` in the same process |
 | **Ensani** (پرتال جامع علوم انسانی) | **live** | HTML `/fa/article/search/index?term=` + `/fa/article/{id}` |
-| **Noordoc** (نوردوک / پایان‌نامه‌ها) | **live** | JSON `SearchThesis` + `/_content/api/v1/thesis/{id}` (author URLs too) |
+| **Noordoc** (نوردوک / پایان‌نامه‌ها) | **live** | JSON `SearchThesis` + `/_content/api/v1/thesis/{id}` (author/person URLs too) |
 | **SID** (جهاد دانشگاهی) | **stubbed** | Cloudflare Waiting Room — no public JSON without challenge |
 | **Elmnet** (علم‌نت) | **stubbed** | ArvanCloud Waiting Room on all probed paths; no public body |
-| **NLAI** (کتابخانه ملی) | **stubbed** | TCP connects but TLS/HTTP hang (0 bytes) from cloud |
+| **NLAI** (کتابخانه ملی) | **stubbed** | TCP connects but TLS/HTTP hang (0 bytes) from many cloud paths |
 
 Stubbed adapters return empty hits plus a blocker note so tools stay discoverable without pretending to scrape behind Cloudflare/ArvanCloud waiting rooms or dead TLS paths.
+
+**Smoke-checked (2026-11-12):** Noormags + Irandoc return real hits for author/advisor queries such as «مهدی شامی زنجانی»; Ensani/Noordoc/Civilica respond live on generic queries (name hits may be empty depending on the catalog).
 
 ## Tools
 
