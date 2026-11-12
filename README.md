@@ -1,12 +1,23 @@
 # IranScholar MCP
 
-**جست‌وجوی یکپارچه منابع علمی فارسی داخل Cursor** — مقاله، پایان‌نامه و کتاب از ایرانداک، نورمگز، سیویلیکا، انسانی، نوردوک، SID، علم‌نت و کتابخانه ملی، بدون جابه‌جایی بین ده‌ها تب مرورگر.
+<p align="center">
+  <strong>جست‌وجوی یکپارچه منابع علمی فارسی داخل Cursor</strong><br/>
+  مقاله · پایان‌نامه · کتاب — بدون جابه‌جایی بین ده‌ها تب مرورگر
+</p>
 
-stdio [MCP](https://modelcontextprotocol.io) server for Persian academic discovery. Use it from **Cursor** (or any MCP client) while writing a thesis: search multiple Iranian catalogs, fetch metadata, export citations, and keep a local bibliography collection.
+<p align="center">
+  stdio <a href="https://modelcontextprotocol.io">MCP</a> server for Persian academic discovery.<br/>
+  Search Iranian catalogs, fetch metadata, export citations, keep a local thesis bibliography.
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Node.js 18+](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-[![MCP](https://img.shields.io/badge/MCP-stdio-blue)](https://modelcontextprotocol.io)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT" /></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen" alt="Node 18+" /></a>
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-stdio-blue" alt="MCP" /></a>
+  <img src="https://img.shields.io/badge/sources-8-informational" alt="8 sources" />
+</p>
+
+**مخزن:** [github.com/alizare84/IranScholar-MCP](https://github.com/alizare84/IranScholar-MCP)
 
 ---
 
@@ -26,17 +37,17 @@ stdio [MCP](https://modelcontextprotocol.io) server for Persian academic discove
 | Source | فارسی | Status | چه می‌کند |
 |--------|--------|--------|-----------|
 | **Noormags** | نورمگز | **live** | جست‌وجوی HTML + متادیتای استناد روی صفحه مقاله |
-| **Civilica** | سیویلیکا | **live** | SSR جست‌وجو + صفحه `/doc/{id}/`؛ در صورت قطع، پروکسی ایرانداک |
-| **Irandoc / Ganj** | ایرانداک (گنج) | **live** | API جست‌وجوی پایان‌نامه/پیشنهاده؛ `get_record` بعد از `search` در همان پروسس |
-| **Ensani** | پرتال جامع علوم انسانی | **live** | جست‌وجوی مقاله HTML + صفحه `/fa/article/{id}` |
+| **Civilica** | سیویلیکا | **live** | SSR جست‌وجو + `/doc/{id}/`؛ در صورت قطع → پروکسی ایرانداک |
+| **Irandoc / Ganj** | ایرانداک (گنج) | **live** | API پایان‌نامه/پیشنهاده؛ `get_record` بعد از `search` در همان پروسس |
+| **Ensani** | پرتال جامع علوم انسانی | **live** | جست‌وجوی مقاله HTML + `/fa/article/{id}` |
 | **Noordoc** | نوردوک | **live** | API پایان‌نامه (`SearchThesis`) + thesis/author |
-| **SID** | جهاد دانشگاهی | **partial** | پارسر HTML — روی **خروجی شبکه ایران**؛ از کلود خارجی اغلب Waiting Room |
+| **SID** | جهاد دانشگاهی | **partial** | پارسر HTML — روی **خروجی ایران**؛ از کلود اغلب Waiting Room |
 | **Elmnet** | علم‌نت | **partial** | `/search?q=` + `/doc/{id}` — روی **ایران**؛ ArvanCloud Waiting Room از بسیاری IPهای کلود |
 | **NLAI** | کتابخانه ملی | **partial** | OPAC — روی **ایران**؛ از کلود خارجی TLS اغلب قطع می‌شود |
 
-**وضعیت‌ها:** `live` = از این محیط هم معمولاً جواب می‌دهد · `partial` = پارسر آماده است، برای نتیجه واقعی بهتر است MCP را روی ماشین/پروکسی با دسترسی ایران اجرا کنید · هرگز چالش CDN را دور نمی‌زنیم.
+**وضعیت‌ها:** `live` = معمولاً از اکثر محیط‌ها جواب می‌دهد · `partial` = پارسر آماده؛ برای نتیجه واقعی MCP را روی ماشین/پروکسی با دسترسی ایران اجرا کنید · چالش CDN را دور نمی‌زنیم.
 
-**دسترسی ایران:** `npm start` روی ISP/VPN ایران، یا پروکسی با `HTTPS_PROXY` / `HTTP_PROXY` و **`NODE_USE_ENV_PROXY=1`** (بدون این فلگ، `fetch` در Node معمولاً پروکسی را رعایت نمی‌کند). اختیاری: `IRANSCHOLAR_COOKIE` فقط برای میزبان‌های **sid.ir / elmnet.ir / nlai.ir** (به نورمگز/سیویلیکا و بقیه ارسال نمی‌شود).
+**دسترسی ایران:** `npm start` روی ISP/VPN ایران، یا `HTTPS_PROXY` / `HTTP_PROXY` + **`NODE_USE_ENV_PROXY=1`**. اختیاری: `IRANSCHOLAR_COOKIE` فقط برای **sid.ir / elmnet.ir / nlai.ir**.
 
 ---
 
@@ -72,14 +83,14 @@ git clone https://github.com/alizare84/IranScholar-MCP.git
 cd IranScholar-MCP
 npm install
 npm run build
-npm start          # stdio MCP — کلاینت (Cursor) این پروسس را spawn می‌کند
+npm start          # stdio MCP — Cursor این پروسس را spawn می‌کند
 
-# با پروکسی ایران (Node باید env-proxy را روشن کند):
+# با پروکسی ایران:
 # NODE_USE_ENV_PROXY=1 HTTPS_PROXY=http://127.0.0.1:7890 npm start
 # یا: node --use-env-proxy dist/index.js
 ```
 
-اسموک زنده (شبکه):
+اسموک زنده:
 
 ```bash
 npm run smoke
@@ -89,7 +100,7 @@ npm run smoke
 
 ## تنظیم در Cursor
 
-**Settings → MCP** (یا فایل `mcp.json`). مسیر `args` باید **مطلق** به `dist/index.js` باشد:
+**Settings → MCP** (یا `mcp.json`). مسیر `args` باید **مطلق** به `dist/index.js` باشد:
 
 ```json
 {
@@ -105,53 +116,44 @@ npm run smoke
 }
 ```
 
-اگر از پروکسی استفاده می‌کنید، `HTTPS_PROXY` را هم در همان `env` (یا محیط سیستم) بگذارید. بدون `NODE_USE_ENV_PROXY=1`، `fetch` معمولاً مستقیم وصل می‌شود.
-
-مثال‌ها:
-
 - macOS/Linux: `"/Users/you/src/IranScholar-MCP/dist/index.js"`
 - Windows: `"C:\\\\Users\\\\you\\\\src\\\\IranScholar-MCP\\\\dist\\\\index.js"`
 
-بعد از `git pull` حتماً دوباره `npm run build` بزنید تا `dist/` با `src/` یکی باشد.
+بعد از `git pull` دوباره `npm run build` بزنید.
 
-### متغیرهای محیطی (اختیاری)
+### متغیرهای محیطی
 
 | Variable | معنی |
 |----------|------|
 | `IRANSCHOLAR_COLLECTION_PATH` | مسیر JSON کالکشن (پیش‌فرض `data/collection.json`) |
-| `IRANSCHOLAR_COOKIE` | Cookie فقط برای درخواست‌های `*.sid.ir` / `*.elmnet.ir` / `*.nlai.ir` (بعد از عبور مرورگر از Waiting Room)؛ به بقیه منابع ارسال نمی‌شود |
-| `HTTPS_PROXY` / `HTTP_PROXY` | پروکسی خروجی ایران — برای `fetch` در Node باید **`NODE_USE_ENV_PROXY=1`** یا `node --use-env-proxy` هم باشد |
-| `NODE_USE_ENV_PROXY` | `1` تا Node از متغیرهای پروکسی محیطی برای `fetch` استفاده کند ([docs](https://nodejs.org/learn/http/enterprise-network-configuration)) |
+| `IRANSCHOLAR_COOKIE` | فقط برای `*.sid.ir` / `*.elmnet.ir` / `*.nlai.ir` |
+| `HTTPS_PROXY` / `HTTP_PROXY` | پروکسی ایران — با **`NODE_USE_ENV_PROXY=1`** یا `node --use-env-proxy` |
+| `NODE_USE_ENV_PROXY` | `1` تا `fetch` پروکسی محیطی را رعایت کند |
 
 ---
 
 ## ساختار پروژه
 
 ```
-src/           سرور MCP + آداپترهای منابع
-scripts/       smoke.ts — تست زنده
-data/          کالکشن محلی (runtime؛ gitignored)
-dist/          خروجی build (gitignore)
+src/           سرور MCP + آداپترها
+scripts/       smoke.ts
+data/          کالکشن محلی (gitignored)
+dist/          خروجی build
 ```
 
 ---
 
-## غیرهدف‌های v1 (Non-goals)
+## غیرهدف‌های v1
 
-- دور زدن paywall PDF  
-- دور زدن Cloudflare / ArvanCloud Waiting Room  
-- SSO دانشگاه / اتوماسیون VPN سازمانی  
-- بات Hosted Agent SDK (این ریپو یک سرور MCP مستقل است)
-
----
-
-## مشارکت و بازخورد
-
-ایده برای منبع بعدی (مگیران، ISC، کتابخانه‌های دانشگاهی، …)، باگ، یا PR خوشحال‌کننده است. اگر برای پایان‌نامه/مقاله فارسی مفید بود، ستاره روی ریپو کمک می‌کند دیده شود.
-
-**مخزن:** https://github.com/alizare84/IranScholar-MCP
+- دور زدن paywall PDF یا Waiting Room CDN  
+- SSO دانشگاه / اتوماسیون VPN  
+- بات Hosted Agent SDK (این یک سرور MCP مستقل است)
 
 ---
+
+## مشارکت
+
+ایده برای منبع بعدی (مگیران، ISC، …)، باگ یا PR خوشحال‌کننده است. اگر مفید بود، ستاره بزنید.
 
 ## License
 
