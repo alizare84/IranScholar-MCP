@@ -1,6 +1,35 @@
 const DEFAULT_UA =
   "IranScholarMCP/0.1 (+https://github.com/iranscholar/iranscholar-mcp; research; polite)";
 
+/**
+ * Waiting-room cookies are only for SID / Elmnet / NLAI (Iran-path partial sources).
+ * Never attach IRANSCHOLAR_COOKIE to Noormags, Civilica, Irandoc, etc.
+ */
+const COOKIE_HOST_SUFFIXES = [
+  "sid.ir",
+  "elmnet.ir",
+  "nlai.ir",
+] as const;
+
+function hostAllowsEnvCookie(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/\.$/, "");
+  return COOKIE_HOST_SUFFIXES.some(
+    (suffix) => host === suffix || host.endsWith(`.${suffix}`),
+  );
+}
+
+function envCookieForUrl(url: string): Record<string, string> {
+  const cookie = process.env.IRANSCHOLAR_COOKIE?.trim();
+  if (!cookie) return {};
+  try {
+    const { hostname } = new URL(url);
+    if (!hostAllowsEnvCookie(hostname)) return {};
+  } catch {
+    return {};
+  }
+  return { Cookie: cookie };
+}
+
 export class HttpError extends Error {
   constructor(
     message: string,
@@ -29,6 +58,7 @@ async function fetchTextOnce(
         Accept:
           "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
         "Accept-Language": "fa,en;q=0.8",
+        ...envCookieForUrl(url),
         ...(init.headers ?? {}),
       },
     });
