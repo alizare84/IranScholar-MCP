@@ -11,10 +11,13 @@ stdio MCP server for Persian academic discovery — search articles and theses a
 | **Noormags** (نورمگز) | **live** | HTML search + citation meta on article pages |
 | **Civilica** (سیویلیکا) | **live** | SSR search `/search/paper/…` + `/doc/{id}/` meta |
 | **Irandoc / Ganj** (ایرانداک) | **live** | via `search.irandoc.ac.ir` Ganj API (network can be flaky) |
+| **Ensani** (پرتال جامع علوم انسانی) | **live** | HTML `/fa/article/search/index?term=` + `/fa/article/{id}` |
+| **Noordoc** (نوردوک / پایان‌نامه‌ها) | **live** | JSON `SearchThesis` + `/_content/api/v1/thesis/{id}` (author URLs too) |
 | **SID** (جهاد دانشگاهی) | **stubbed** | Cloudflare Waiting Room — no public JSON without challenge |
-| **NLAI** (کتابخانه ملی) | **stubbed** | OPAC/www often unreachable (TLS/timeout) from many environments |
+| **Elmnet** (علم‌نت) | **stubbed** | ArvanCloud Waiting Room on all probed paths; no public body |
+| **NLAI** (کتابخانه ملی) | **stubbed** | TCP connects but TLS/HTTP hang (0 bytes) from cloud |
 
-Stubbed adapters return empty hits plus a blocker note so tools stay discoverable without pretending to scrape behind Cloudflare.
+Stubbed adapters return empty hits plus a blocker note so tools stay discoverable without pretending to scrape behind Cloudflare/ArvanCloud waiting rooms or dead TLS paths.
 
 ## Tools
 
@@ -46,7 +49,7 @@ npm start
 # equivalent: node dist/index.js
 ```
 
-Optional live smoke (hits Noormags / Civilica / Irandoc; SID & NLAI stay stubbed):
+Optional live smoke (hits Noormags / Civilica / Irandoc / Ensani / Noordoc; SID, Elmnet & NLAI stay stubbed):
 
 ```bash
 npm run smoke

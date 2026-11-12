@@ -5,7 +5,10 @@ export type SourceId =
   | "noormags"
   | "civilica"
   | "sid"
-  | "nlai";
+  | "nlai"
+  | "elmnet"
+  | "ensani"
+  | "noordoc";
 
 export type SourceCapability = "search" | "get_record";
 

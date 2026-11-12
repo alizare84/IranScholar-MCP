@@ -1,7 +1,7 @@
 {
   "name": "iranscholar-mcp",
   "version": "0.1.0",
-  "description": "IranScholar MCP — search Persian academic sources (Irandoc, Noormags, Civilica, SID, NLAI) for thesis writing",
+  "description": "IranScholar MCP — search Persian academic sources (Irandoc, Noormags, Civilica, Ensani, Noordoc, SID, NLAI, Elmnet) for thesis writing",
   "type": "module",
   "bin": {
     "iranscholar-mcp": "./dist/index.js"
