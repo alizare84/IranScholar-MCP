@@ -1,65 +1,91 @@
 # IranScholar MCP
 
-stdio MCP server for Persian academic discovery — search articles and theses across Iranian sources from Cursor (or any MCP client) while writing a thesis.
+**جست‌وجوی یکپارچه منابع علمی فارسی داخل Cursor** — مقاله، پایان‌نامه و کتاب از ایرانداک، نورمگز، سیویلیکا، انسانی، نوردوک، SID، علم‌نت و کتابخانه ملی، بدون جابه‌جایی بین ده‌ها تب مرورگر.
 
-سرور MCP برای جست‌وجو و گردآوری منابع علمی فارسی (مقاله، پایان‌نامه، کتاب) هنگام نگارش پایان‌نامه.
+stdio [MCP](https://modelcontextprotocol.io) server for Persian academic discovery. Use it from **Cursor** (or any MCP client) while writing a thesis: search multiple Iranian catalogs, fetch metadata, export citations, and keep a local bibliography collection.
 
-## Sources
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Node.js 18+](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+[![MCP](https://img.shields.io/badge/MCP-stdio-blue)](https://modelcontextprotocol.io)
 
-| Source | Status | Notes |
-|--------|--------|-------|
-| **Noormags** (نورمگز) | **live** | HTML search + Highwire citation meta on article pages |
-| **Civilica** (سیویلیکا) | **live** | Prefer SSR `/search/paper/…` + `/doc/{id}/`; falls back to Irandoc Civilica proxy when direct SSR fails |
-| **Irandoc / Ganj** (ایرانداک) | **live** | `search.irandoc.ac.ir` Ganj API (direct `ganj.irandoc.ac.ir` often times out). `get_record` uses in-process cache from a recent `search` in the same process |
-| **Ensani** (پرتال جامع علوم انسانی) | **live** | HTML `/fa/article/search/index?term=` + `/fa/article/{id}` |
-| **Noordoc** (نوردوک / پایان‌نامه‌ها) | **live** | JSON `SearchThesis` + `/_content/api/v1/thesis/{id}` (author/person URLs too) |
-| **SID** (جهاد دانشگاهی) | **partial** | `/search/paper/{q}/fa` + `/paper/{id}/fa` — **works on Iran egress**; foreign cloud IPs often get CDN Waiting Room (honest empty + note) |
-| **Elmnet** (علم‌نت) | **partial** | `/search?q=` + `/doc/{id}` — **works on Iran egress**; ArvanCloud Waiting Room from many cloud IPs |
-| **NLAI** (کتابخانه ملی) | **partial** | OPAC `bibliographicSearch.do` — **works on Iran egress**; TLS often hangs from foreign cloud |
+---
 
-**Iran access:** Run `npm start` on a machine with Iranian ISP/VPN egress (or set `HTTPS_PROXY` / `HTTP_PROXY` to an Iran-capable proxy). Optional `IRANSCHOLAR_COOKIE` if your browser already cleared a waiting room. Adapters never bypass CDN challenges.
+## چرا این پروژه؟
 
-**Smoke-checked (2026-11-12):** Noormags + Irandoc return real hits for author/advisor queries such as «مهدی شامی زنجانی»; Ensani/Noordoc/Civilica respond live on generic queries. SID/Elmnet/NLAI parsers are wired; from non-Iran cloud they typically return `partial` + waiting-room/unreachable notes.
+پژوهشگر فارسی‌زبان معمولاً باید جداگانه در نورمگز، سیویلیکا، گنج ایرانداک و بقیه جستجو کند، لینک و متادیتا را دستی کپی کند و استناد را جدا بسازد. **IranScholar MCP** این مسیر را به چند ابزار MCP داخل ادیتور تبدیل می‌کند:
 
-## Tools
+1. یک کوئری → چند منبع  
+2. گرفتن رکورد کامل (عنوان، نویسندگان، چکیده، سال، نشانی)  
+3. خروجی استناد APA / Vancouver / BibTeX  
+4. ذخیره در کالکشن محلی JSON برای پایان‌نامه
 
-| Tool | Purpose |
-|------|---------|
-| `list_sources` | Configured sources, capabilities, and live/partial/stubbed status |
-| `search_sources` | `query`, optional `sources[]`, `limit` |
-| `get_record` | Fetch one record by `source` + `id` / `url` |
-| `export_citation` | Formats: `apa` \| `vancouver` \| `bibtex` |
-| `save_collection_item` / `list_collection` | Local JSON bibliography |
+---
 
-## Requirements
+## منابع (Sources)
 
-- Node.js **18+**
+| Source | فارسی | Status | چه می‌کند |
+|--------|--------|--------|-----------|
+| **Noormags** | نورمگز | **live** | جست‌وجوی HTML + متادیتای استناد روی صفحه مقاله |
+| **Civilica** | سیویلیکا | **live** | SSR جست‌وجو + صفحه `/doc/{id}/`؛ در صورت قطع، پروکسی ایرانداک |
+| **Irandoc / Ganj** | ایرانداک (گنج) | **live** | API جست‌وجوی پایان‌نامه/پیشنهاده؛ `get_record` بعد از `search` در همان پروسس |
+| **Ensani** | پرتال جامع علوم انسانی | **live** | جست‌وجوی مقاله HTML + صفحه `/fa/article/{id}` |
+| **Noordoc** | نوردوک | **live** | API پایان‌نامه (`SearchThesis`) + thesis/author |
+| **SID** | جهاد دانشگاهی | **partial** | پارسر HTML — روی **خروجی شبکه ایران**؛ از کلود خارجی اغلب Waiting Room |
+| **Elmnet** | علم‌نت | **partial** | `/search?q=` + `/doc/{id}` — روی **ایران**؛ ArvanCloud Waiting Room از بسیاری IPهای کلود |
+| **NLAI** | کتابخانه ملی | **partial** | OPAC — روی **ایران**؛ از کلود خارجی TLS اغلب قطع می‌شود |
 
-## Install & build
+**وضعیت‌ها:** `live` = از این محیط هم معمولاً جواب می‌دهد · `partial` = پارسر آماده است، برای نتیجه واقعی بهتر است MCP را روی ماشین/پروکسی با دسترسی ایران اجرا کنید · هرگز چالش CDN را دور نمی‌زنیم.
+
+**دسترسی ایران:** `npm start` روی ISP/VPN ایران، یا `HTTPS_PROXY` / `HTTP_PROXY`. اختیاری: `IRANSCHOLAR_COOKIE` اگر مرورگر Waiting Room را رد کرده باشد.
+
+---
+
+## ابزارهای MCP (Tools)
+
+| Tool | کار |
+|------|-----|
+| `list_sources` | فهرست منابع، قابلیت‌ها و وضعیت live/partial |
+| `search_sources` | `query` + اختیاری `sources[]` و `limit` |
+| `get_record` | متادیتای یک رکورد با `source` + `id` / `url` |
+| `export_citation` | `apa` \| `vancouver` \| `bibtex` |
+| `save_collection_item` | ذخیره در کتاب‌شناسی محلی JSON |
+| `list_collection` | فهرست آیتم‌های ذخیره‌شده |
+
+### نمونه جریان کار
+
+```
+list_sources
+  → search_sources  query=«مهدی شامی زنجانی»  sources=["noormags","irandoc"]
+  → get_record      source=noormags  id=1809667
+  → export_citation style=apa  source=noormags  id=1809667
+  → save_collection_item …
+```
+
+---
+
+## نصب و اجرا
+
+نیازمندی: **Node.js 18+**
 
 ```bash
 git clone https://github.com/alizare84/IranScholar-MCP.git
 cd IranScholar-MCP
 npm install
 npm run build
+npm start          # stdio MCP — کلاینت (Cursor) این پروسس را spawn می‌کند
 ```
 
-Run the server (stdio — leave it for the MCP client to spawn):
-
-```bash
-npm start
-# equivalent: node dist/index.js
-```
-
-Optional live smoke (hits Noormags / Civilica / Irandoc / Ensani / Noordoc; SID / Elmnet / NLAI exercise Iran-path adapters):
+اسموک زنده (شبکه):
 
 ```bash
 npm run smoke
 ```
 
-## Cursor MCP config
+---
 
-Cursor → **Settings → MCP** (or your user `mcp.json`). Point `args` at the **absolute** path of `dist/index.js` on your machine:
+## تنظیم در Cursor
+
+**Settings → MCP** (یا فایل `mcp.json`). مسیر `args` باید **مطلق** به `dist/index.js` باشد:
 
 ```json
 {
@@ -72,36 +98,50 @@ Cursor → **Settings → MCP** (or your user `mcp.json`). Point `args` at the *
 }
 ```
 
-Examples:
+مثال‌ها:
 
 - macOS/Linux: `"/Users/you/src/IranScholar-MCP/dist/index.js"`
 - Windows: `"C:\\\\Users\\\\you\\\\src\\\\IranScholar-MCP\\\\dist\\\\index.js"`
 
-Rebuild after pulling (`npm run build`) so `dist/` matches `src/`.
+بعد از `git pull` حتماً دوباره `npm run build` بزنید تا `dist/` با `src/` یکی باشد.
 
-### Optional environment
+### متغیرهای محیطی (اختیاری)
 
-| Variable | Meaning |
-|----------|---------|
-| `IRANSCHOLAR_COLLECTION_PATH` | Override local collection JSON (default `data/collection.json`) |
-| `IRANSCHOLAR_COOKIE` | Cookie header for SID/Elmnet/NLAI after a browser clears CDN waiting room |
-| `HTTPS_PROXY` / `HTTP_PROXY` | Proxy toward Iran (or other) egress if your runtime supports it for `fetch` |
+| Variable | معنی |
+|----------|------|
+| `IRANSCHOLAR_COLLECTION_PATH` | مسیر JSON کالکشن (پیش‌فرض `data/collection.json`) |
+| `IRANSCHOLAR_COOKIE` | هدر Cookie برای SID/Elmnet/NLAI بعد از عبور مرورگر از Waiting Room |
+| `HTTPS_PROXY` / `HTTP_PROXY` | پروکسی به‌سمت خروجی ایران (اگر runtime از آن برای `fetch` پشتیبانی کند) |
 
-## Project layout
+---
+
+## ساختار پروژه
 
 ```
-src/           TypeScript MCP server + source adapters
-scripts/       smoke.ts live checks
-data/          local collection (gitignored runtime file)
-dist/          build output (gitignored; created by npm run build)
+src/           سرور MCP + آداپترهای منابع
+scripts/       smoke.ts — تست زنده
+data/          کالکشن محلی (runtime؛ gitignored)
+dist/          خروجی build (gitignore)
 ```
 
-## Non-goals (v1)
+---
 
-- PDF paywall bypass
-- CDN / Waiting Room / Cloudflare challenge bypass
-- University SSO / campus VPN automation
-- Hosted Agent SDK bot (this repo is a standalone MCP server)
+## غیرهدف‌های v1 (Non-goals)
+
+- دور زدن paywall PDF  
+- دور زدن Cloudflare / ArvanCloud Waiting Room  
+- SSO دانشگاه / اتوماسیون VPN سازمانی  
+- بات Hosted Agent SDK (این ریپو یک سرور MCP مستقل است)
+
+---
+
+## مشارکت و بازخورد
+
+ایده برای منبع بعدی (مگیران، ISC، کتابخانه‌های دانشگاهی، …)، باگ، یا PR خوشحال‌کننده است. اگر برای پایان‌نامه/مقاله فارسی مفید بود، ستاره روی ریپو کمک می‌کند دیده شود.
+
+**مخزن:** https://github.com/alizare84/IranScholar-MCP
+
+---
 
 ## License
 
