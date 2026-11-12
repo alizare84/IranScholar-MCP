@@ -13,6 +13,9 @@ const sourceEnum = z.enum([
   "civilica",
   "sid",
   "nlai",
+  "elmnet",
+  "ensani",
+  "noordoc",
 ]);
 
 function jsonText(data: unknown) {
@@ -44,7 +47,7 @@ server.registerTool(
   {
     title: "List academic sources",
     description:
-      "List configured Persian academic sources (Irandoc, Noormags, Civilica, SID, NLAI) with live/partial/stubbed status and capabilities.",
+      "List configured Persian academic sources (Irandoc, Noormags, Civilica, SID, NLAI, Elmnet, Ensani, Noordoc) with live/partial/stubbed status and capabilities.",
   },
   async () => {
     return jsonText({
