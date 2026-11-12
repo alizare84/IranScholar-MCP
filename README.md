@@ -36,7 +36,7 @@ stdio [MCP](https://modelcontextprotocol.io) server for Persian academic discove
 
 **وضعیت‌ها:** `live` = از این محیط هم معمولاً جواب می‌دهد · `partial` = پارسر آماده است، برای نتیجه واقعی بهتر است MCP را روی ماشین/پروکسی با دسترسی ایران اجرا کنید · هرگز چالش CDN را دور نمی‌زنیم.
 
-**دسترسی ایران:** `npm start` روی ISP/VPN ایران، یا `HTTPS_PROXY` / `HTTP_PROXY`. اختیاری: `IRANSCHOLAR_COOKIE` اگر مرورگر Waiting Room را رد کرده باشد.
+**دسترسی ایران:** `npm start` روی ISP/VPN ایران، یا پروکسی با `HTTPS_PROXY` / `HTTP_PROXY` و **`NODE_USE_ENV_PROXY=1`** (بدون این فلگ، `fetch` در Node معمولاً پروکسی را رعایت نمی‌کند). اختیاری: `IRANSCHOLAR_COOKIE` فقط برای میزبان‌های **sid.ir / elmnet.ir / nlai.ir** (به نورمگز/سیویلیکا و بقیه ارسال نمی‌شود).
 
 ---
 
@@ -73,6 +73,10 @@ cd IranScholar-MCP
 npm install
 npm run build
 npm start          # stdio MCP — کلاینت (Cursor) این پروسس را spawn می‌کند
+
+# با پروکسی ایران (Node باید env-proxy را روشن کند):
+# NODE_USE_ENV_PROXY=1 HTTPS_PROXY=http://127.0.0.1:7890 npm start
+# یا: node --use-env-proxy dist/index.js
 ```
 
 اسموک زنده (شبکه):
@@ -92,11 +96,16 @@ npm run smoke
   "mcpServers": {
     "iranscholar": {
       "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/IranScholar-MCP/dist/index.js"]
+      "args": ["/ABSOLUTE/PATH/TO/IranScholar-MCP/dist/index.js"],
+      "env": {
+        "NODE_USE_ENV_PROXY": "1"
+      }
     }
   }
 }
 ```
+
+اگر از پروکسی استفاده می‌کنید، `HTTPS_PROXY` را هم در همان `env` (یا محیط سیستم) بگذارید. بدون `NODE_USE_ENV_PROXY=1`، `fetch` معمولاً مستقیم وصل می‌شود.
 
 مثال‌ها:
 
@@ -110,8 +119,9 @@ npm run smoke
 | Variable | معنی |
 |----------|------|
 | `IRANSCHOLAR_COLLECTION_PATH` | مسیر JSON کالکشن (پیش‌فرض `data/collection.json`) |
-| `IRANSCHOLAR_COOKIE` | هدر Cookie برای SID/Elmnet/NLAI بعد از عبور مرورگر از Waiting Room |
-| `HTTPS_PROXY` / `HTTP_PROXY` | پروکسی به‌سمت خروجی ایران (اگر runtime از آن برای `fetch` پشتیبانی کند) |
+| `IRANSCHOLAR_COOKIE` | Cookie فقط برای درخواست‌های `*.sid.ir` / `*.elmnet.ir` / `*.nlai.ir` (بعد از عبور مرورگر از Waiting Room)؛ به بقیه منابع ارسال نمی‌شود |
+| `HTTPS_PROXY` / `HTTP_PROXY` | پروکسی خروجی ایران — برای `fetch` در Node باید **`NODE_USE_ENV_PROXY=1`** یا `node --use-env-proxy` هم باشد |
+| `NODE_USE_ENV_PROXY` | `1` تا Node از متغیرهای پروکسی محیطی برای `fetch` استفاده کند ([docs](https://nodejs.org/learn/http/enterprise-network-configuration)) |
 
 ---
 

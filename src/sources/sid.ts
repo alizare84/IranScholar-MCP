@@ -14,7 +14,8 @@ const NOTE =
   "Public HTML search `/search/paper/{q}/fa` + paper pages `/paper/{id}/fa` " +
   "(citation meta when present). Live from Iran egress; many foreign cloud IPs " +
   "hit Cloudflare/ArvanCloud Waiting Room — then returns partial + empty hits. " +
-  "Optional IRANSCHOLAR_COOKIE / HTTPS_PROXY. No challenge bypass.";
+  "Optional IRANSCHOLAR_COOKIE (sid.ir hosts only) / HTTPS_PROXY with " +
+  "NODE_USE_ENV_PROXY=1. No challenge bypass.";
 
 function extractId(idOrUrl: string): string {
   const m =

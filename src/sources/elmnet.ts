@@ -14,7 +14,8 @@ const NOTE =
   "Public HTML search `/search?q=` + document pages `/doc/{id}` " +
   "(id shape like `1576356-91912`). Live from Iran egress; ArvanCloud Waiting Room " +
   "blocks many cloud IPs — then returns partial + empty hits. " +
-  "Optional IRANSCHOLAR_COOKIE / HTTPS_PROXY. No challenge bypass.";
+  "Optional IRANSCHOLAR_COOKIE (elmnet.ir hosts only) / HTTPS_PROXY with " +
+  "NODE_USE_ENV_PROXY=1. No challenge bypass.";
 
 function extractId(idOrUrl: string): string {
   const m =

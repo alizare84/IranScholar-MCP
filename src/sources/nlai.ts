@@ -9,13 +9,13 @@ import type { ScholarRecord, SearchHit, SearchResult } from "../types.js";
 import type { SourceAdapter } from "./base.js";
 
 const OPAC = "https://opac.nlai.ir";
-const DL = "https://dl.nlai.ir";
 
 const NOTE =
   "OPAC HTML search `opac.nlai.ir/opac-prod/search/bibliographicSearch.do` " +
   "(classType=0 books) + bibliographic detail pages. Often TLS-hangs from foreign " +
   "cloud; typically reachable on Iran networks. Status partial. " +
-  "Optional HTTPS_PROXY / IRANSCHOLAR_COOKIE. No auth bypass.";
+  "Optional HTTPS_PROXY (+ NODE_USE_ENV_PROXY=1) / IRANSCHOLAR_COOKIE (NLAI hosts only). " +
+  "No auth bypass.";
 
 function clean(text: string): string {
   return decodeHtmlEntities(text.replace(/\s+/g, " ").trim());
@@ -69,26 +69,6 @@ export const nlaiAdapter: SourceAdapter = {
     try {
       html = await fetchText(url, {}, 45_000, 1);
     } catch (err) {
-      // Secondary try: digital library landing (still catalogs Iran access)
-      try {
-        const dlHtml = await fetchText(
-          `${DL}/UI/Search/BasicSearch.aspx?Index=home`,
-          {},
-          30_000,
-          0,
-        );
-        if (isWaitingRoomHtml(dlHtml)) {
-          return {
-            source: "nlai",
-            status: "partial",
-            query,
-            hits: [],
-            note: waitingRoomNote("nlai", "dl.nlai.ir"),
-          };
-        }
-      } catch {
-        /* keep primary error */
-      }
       return {
         source: "nlai",
         status: "partial",
