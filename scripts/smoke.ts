@@ -68,10 +68,18 @@ async function main() {
   console.log("\n=== export_citation apa (noormags) ===");
   console.log(exportCitation(noor, "apa"));
 
-  console.log("\n=== stubbed sources (expect empty + notes) ===");
+  console.log("\n=== Iran-path partial sources (sid/elmnet/nlai) ===");
   for (const id of ["sid", "nlai", "elmnet"] as const) {
-    const r = await getAdapter(id).search("test", 1);
-    console.log(id, r.status, (r.note || "").slice(0, 120));
+    const r = await getAdapter(id).search("مدیریت دانش", 2);
+    console.log(
+      id,
+      r.status,
+      `hits=${r.hits.length}`,
+      (r.note || "ok").slice(0, 140),
+    );
+    if (r.status === "stubbed") {
+      throw new Error(`${id} should be partial/live for Iran-access adapters`);
+    }
   }
 
   console.log("\n=== collection ===");

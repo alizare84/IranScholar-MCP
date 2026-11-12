@@ -13,19 +13,19 @@ stdio MCP server for Persian academic discovery — search articles and theses a
 | **Irandoc / Ganj** (ایرانداک) | **live** | `search.irandoc.ac.ir` Ganj API (direct `ganj.irandoc.ac.ir` often times out). `get_record` uses in-process cache from a recent `search` in the same process |
 | **Ensani** (پرتال جامع علوم انسانی) | **live** | HTML `/fa/article/search/index?term=` + `/fa/article/{id}` |
 | **Noordoc** (نوردوک / پایان‌نامه‌ها) | **live** | JSON `SearchThesis` + `/_content/api/v1/thesis/{id}` (author/person URLs too) |
-| **SID** (جهاد دانشگاهی) | **stubbed** | Cloudflare Waiting Room — no public JSON without challenge |
-| **Elmnet** (علم‌نت) | **stubbed** | ArvanCloud Waiting Room on all probed paths; no public body |
-| **NLAI** (کتابخانه ملی) | **stubbed** | TCP connects but TLS/HTTP hang (0 bytes) from many cloud paths |
+| **SID** (جهاد دانشگاهی) | **partial** | `/search/paper/{q}/fa` + `/paper/{id}/fa` — **works on Iran egress**; foreign cloud IPs often get CDN Waiting Room (honest empty + note) |
+| **Elmnet** (علم‌نت) | **partial** | `/search?q=` + `/doc/{id}` — **works on Iran egress**; ArvanCloud Waiting Room from many cloud IPs |
+| **NLAI** (کتابخانه ملی) | **partial** | OPAC `bibliographicSearch.do` — **works on Iran egress**; TLS often hangs from foreign cloud |
 
-Stubbed adapters return empty hits plus a blocker note so tools stay discoverable without pretending to scrape behind Cloudflare/ArvanCloud waiting rooms or dead TLS paths.
+**Iran access:** Run `npm start` on a machine with Iranian ISP/VPN egress (or set `HTTPS_PROXY` / `HTTP_PROXY` to an Iran-capable proxy). Optional `IRANSCHOLAR_COOKIE` if your browser already cleared a waiting room. Adapters never bypass CDN challenges.
 
-**Smoke-checked (2026-11-12):** Noormags + Irandoc return real hits for author/advisor queries such as «مهدی شامی زنجانی»; Ensani/Noordoc/Civilica respond live on generic queries (name hits may be empty depending on the catalog).
+**Smoke-checked (2026-11-12):** Noormags + Irandoc return real hits for author/advisor queries such as «مهدی شامی زنجانی»; Ensani/Noordoc/Civilica respond live on generic queries. SID/Elmnet/NLAI parsers are wired; from non-Iran cloud they typically return `partial` + waiting-room/unreachable notes.
 
 ## Tools
 
 | Tool | Purpose |
 |------|---------|
-| `list_sources` | Configured sources, capabilities, and live/stubbed status |
+| `list_sources` | Configured sources, capabilities, and live/partial/stubbed status |
 | `search_sources` | `query`, optional `sources[]`, `limit` |
 | `get_record` | Fetch one record by `source` + `id` / `url` |
 | `export_citation` | Formats: `apa` \| `vancouver` \| `bibtex` |
@@ -51,7 +51,7 @@ npm start
 # equivalent: node dist/index.js
 ```
 
-Optional live smoke (hits Noormags / Civilica / Irandoc / Ensani / Noordoc; SID, Elmnet & NLAI stay stubbed):
+Optional live smoke (hits Noormags / Civilica / Irandoc / Ensani / Noordoc; SID / Elmnet / NLAI exercise Iran-path adapters):
 
 ```bash
 npm run smoke
@@ -84,6 +84,8 @@ Rebuild after pulling (`npm run build`) so `dist/` matches `src/`.
 | Variable | Meaning |
 |----------|---------|
 | `IRANSCHOLAR_COLLECTION_PATH` | Override local collection JSON (default `data/collection.json`) |
+| `IRANSCHOLAR_COOKIE` | Cookie header for SID/Elmnet/NLAI after a browser clears CDN waiting room |
+| `HTTPS_PROXY` / `HTTP_PROXY` | Proxy toward Iran (or other) egress if your runtime supports it for `fetch` |
 
 ## Project layout
 
@@ -97,6 +99,7 @@ dist/          build output (gitignored; created by npm run build)
 ## Non-goals (v1)
 
 - PDF paywall bypass
+- CDN / Waiting Room / Cloudflare challenge bypass
 - University SSO / campus VPN automation
 - Hosted Agent SDK bot (this repo is a standalone MCP server)
 

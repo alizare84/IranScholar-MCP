@@ -1,6 +1,12 @@
 const DEFAULT_UA =
   "IranScholarMCP/0.1 (+https://github.com/iranscholar/iranscholar-mcp; research; polite)";
 
+/** Optional Cookie header after a browser clears CDN waiting rooms (Iran egress). */
+function envCookie(): Record<string, string> {
+  const cookie = process.env.IRANSCHOLAR_COOKIE?.trim();
+  return cookie ? { Cookie: cookie } : {};
+}
+
 export class HttpError extends Error {
   constructor(
     message: string,
@@ -29,6 +35,7 @@ async function fetchTextOnce(
         Accept:
           "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
         "Accept-Language": "fa,en;q=0.8",
+        ...envCookie(),
         ...(init.headers ?? {}),
       },
     });
